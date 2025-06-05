@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>준5급 한자 게임</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    .day-button { padding: 6px 12px; margin: 2px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; }
+    .day-button.active { background: #add8e6; }
+    .hanja-box { border: 1px solid #ccc; padding: 20px; border-radius: 12px; font-size: 36px; cursor: pointer; text-align: center; }
+    .choices button { margin: 6px; padding: 10px 20px; border-radius: 12px; cursor: pointer; }
+    .correct { background: #a8e6cf; }
+    .wrong { background: #ff8b94; }
+    .back-btn { margin-top: 20px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>준5급 한자 게임</h1>
+  <div id="day-buttons"></div>
+  <h2 id="day-title"></h2>
+  <div id="hanja-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+  <div id="question-box"></div>
+
+  <script>
+    const hanjaDays = [
+  {
+    day: 1,
+    hanjas: [
+      { hanja: "金", meaning: "쇠", choices: ["쇠", "흙", "하늘", "불"] },
+      { hanja: "水", meaning: "물", choices: ["불", "흙", "물", "바람"] }
+    ]
+  },
+  {
+    day: 2,
+    hanjas: [
+      { hanja: "火", meaning: "불", choices: ["불", "달", "비", "강"] },
+      { hanja: "木", meaning: "나무", choices: ["금", "물", "불", "나무"] }
+    ]
+  },
+  {
+    day: 3,
+    hanjas: [
+      { hanja: "山", meaning: "산", choices: ["물", "산", "달", "평지"] },
+      { hanja: "川", meaning: "내", choices: ["산", "내", "길", "하늘"] }
+    ]
+  },
+  {
+    day: 4,
+    hanjas: [
+      { hanja: "土", meaning: "흙", choices: ["흙", "물", "불", "돌"] },
+      { hanja: "人", meaning: "사람", choices: ["동물", "사람", "나무", "물건"] }
+    ]
+  },
+  {
+    day: 5,
+    hanjas: [
+      { hanja: "日", meaning: "해", choices: ["별", "비", "해", "달"] },
+      { hanja: "月", meaning: "달", choices: ["별", "달", "해", "구름"] }
+    ]
+  },
+  {
+    day: 6,
+    hanjas: [
+      { hanja: "天", meaning: "하늘", choices: ["하늘", "물", "불", "구름"] },
+      { hanja: "文", meaning: "글", choices: ["말", "글", "길", "손"] }
+    ]
+  },
+  {
+    day: 7,
+    hanjas: [
+      { hanja: "力", meaning: "힘", choices: ["힘", "칼", "불", "기운"] },
+      { hanja: "心", meaning: "마음", choices: ["마음", "몸", "손", "귀"] }
+    ]
+  },
+  {
+    day: 8,
+    hanjas: [
+      { hanja: "目", meaning: "눈", choices: ["귀", "입", "눈", "손"] },
+      { hanja: "耳", meaning: "귀", choices: ["귀", "눈", "입", "코"] }
+    ]
+  },
+  {
+    day: 9,
+    hanjas: [
+      { hanja: "口", meaning: "입", choices: ["입", "손", "발", "눈"] },
+      { hanja: "手", meaning: "손", choices: ["손", "발", "머리", "입"] }
+    ]
+  },
+  {
+    day: 10,
+    hanjas: [
+      { hanja: "玉", meaning: "구슬", choices: ["구슬", "불", "쇠", "물"] },
+      { hanja: "雨", meaning: "비", choices: ["달", "비", "해", "하늘"] }
+    ]
+  },
+  {
+    day: 11,
+    hanjas: [
+      { hanja: "気", meaning: "기운", choices: ["기운", "바람", "불", "힘"] },
+      { hanja: "音", meaning: "소리", choices: ["빛", "소리", "바람", "냄새"] }
+    ]
+  },
+  {
+    day: 12,
+    hanjas: [
+      { hanja: "正", meaning: "바르다", choices: ["바르다", "기울다", "비뚤다", "작다"] },
+      { hanja: "左", meaning: "왼쪽", choices: ["오른쪽", "왼쪽", "앞", "뒤"] }
+    ]
+  },
+  {
+    day: 13,
+    hanjas: [
+      { hanja: "右", meaning: "오른쪽", choices: ["오른쪽", "왼쪽", "앞", "뒤"] },
+      { hanja: "大", meaning: "크다", choices: ["작다", "중간", "높다", "크다"] }
+    ]
+  },
+  {
+    day: 14,
+    hanjas: [
+      { hanja: "小", meaning: "작다", choices: ["작다", "많다", "길다", "크다"] },
+      { hanja: "中", meaning: "가운데", choices: ["끝", "옆", "가운데", "앞"] }
+    ]
+  },
+  {
+    day: 15,
+    hanjas: [
+      { hanja: "上", meaning: "위", choices: ["위", "아래", "옆", "앞"] },
+      { hanja: "下", meaning: "아래", choices: ["앞", "뒤", "위", "아래"] }
+    ]
+  },
+  {
+    day: 16,
+    hanjas: [
+      { hanja: "入", meaning: "들다", choices: ["들다", "나다", "오르다", "떨어지다"] },
+      { hanja: "出", meaning: "나다", choices: ["들다", "나다", "숨다", "달리다"] }
+    ]
+  },
+  {
+    day: 17,
+    hanjas: [
+      { hanja: "女", meaning: "여자", choices: ["남자", "여자", "아이", "어른"] },
+      { hanja: "男", meaning: "남자", choices: ["남자", "여자", "어린이", "동생"] }
+    ]
+  },
+  {
+    day: 18,
+    hanjas: [
+      { hanja: "子", meaning: "아이", choices: ["아이", "어른", "동물", "사람"] },
+      { hanja: "校", meaning: "학교", choices: ["학교", "집", "시장", "우체국"] }
+    ]
+  },
+  {
+    day: 19,
+    hanjas: [
+      { hanja: "学", meaning: "배우다", choices: ["자다", "놀다", "배우다", "달리다"] },
+      { hanja: "生", meaning: "나다", choices: ["죽다", "나다", "걷다", "앉다"] }
+    ]
+  },
+  {
+    day: 20,
+    hanjas: [
+      { hanja: "先", meaning: "먼저", choices: ["먼저", "나중", "끝", "시작"] },
+      { hanja: "名", meaning: "이름", choices: ["이름", "성격", "모양", "소리"] }
+    ]
+  },
+  {
+    day: 21,
+    hanjas: [
+      { hanja: "字", meaning: "글자", choices: ["그림", "말", "글자", "도형"] },
+      { hanja: "年", meaning: "해", choices: ["달", "해", "시", "날"] }
+    ]
+  },
+  {
+    day: 22,
+    hanjas: [
+      { hanja: "曜", meaning: "요일", choices: ["시간", "요일", "하루", "계절"] },
+      { hanja: "時", meaning: "시간", choices: ["시간", "분", "초", "날"] }
+    ]
+  },
+  {
+    day: 23,
+    hanjas: [
+      { hanja: "分", meaning: "나누다", choices: ["합치다", "나누다", "따르다", "모이다"] },
+      { hanja: "今", meaning: "지금", choices: ["과거", "지금", "미래", "내일"] }
+    ]
+  },
+  {
+    day: 24,
+    hanjas: [
+      { hanja: "午", meaning: "낮", choices: ["밤", "낮", "아침", "저녁"] },
+      { hanja: "前", meaning: "앞", choices: ["뒤", "앞", "옆", "안"] }
+    ]
+  },
+  {
+    day: 25,
+    hanjas: [
+      { hanja: "後", meaning: "뒤", choices: ["앞", "가운데", "옆", "뒤"] },
+      { hanja: "間", meaning: "사이", choices: ["밖", "앞", "사이", "가운데"] }
+    ]
+  },
+  {
+    day: 26,
+    hanjas: [
+      { hanja: "高", meaning: "높다", choices: ["낮다", "크다", "높다", "넓다"] },
+      { hanja: "多", meaning: "많다", choices: ["작다", "많다", "적다", "길다"] }
+    ]
+  },
+  {
+    day: 27,
+    hanjas: [
+      { hanja: "少", meaning: "적다", choices: ["많다", "적다", "넓다", "높다"] },
+      { hanja: "長", meaning: "길다", choices: ["짧다", "넓다", "길다", "높다"] }
+    ]
+  },
+  {
+    day: 28,
+    hanjas: [
+      { hanja: "新", meaning: "새롭다", choices: ["오래되다", "새롭다", "낡다", "익숙하다"] },
+      { hanja: "古", meaning: "옛날", choices: ["지금", "과거", "옛날", "미래"] }
+    ]
+  },
+  {
+    day: 29,
+    hanjas: [
+      { hanja: "白", meaning: "하얗다", choices: ["하얗다", "검다", "노랗다", "빨갛다"] },
+      { hanja: "赤", meaning: "붉다", choices: ["파랗다", "하얗다", "붉다", "검다"] }
+    ]
+  },
+  {
+    day: 30,
+    hanjas: [
+      { hanja: "青", meaning: "푸르다", choices: ["붉다", "푸르다", "검다", "노랗다"] },
+      { hanja: "見", meaning: "보다", choices: ["듣다", "만지다", "보다", "말하다"] }
+    ]
+  },
+  {
+    day: 31,
+    hanjas: [
+      { hanja: "食", meaning: "먹다", choices: ["먹다", "마시다", "보다", "걷다"] },
+      { hanja: "飲", meaning: "마시다", choices: ["걷다", "먹다", "마시다", "달리다"] }
+    ]
+  },
+  {
+    day: 32,
+    hanjas: [
+      { hanja: "話", meaning: "말하다", choices: ["보다", "말하다", "듣다", "읽다"] },
+      { hanja: "聞", meaning: "듣다", choices: ["듣다", "보다", "말하다", "씻다"] }
+    ]
+  },
+  {
+    day: 33,
+    hanjas: [
+      { hanja: "読", meaning: "읽다", choices: ["읽다", "보다", "쓰다", "말하다"] },
+      { hanja: "書", meaning: "쓰다", choices: ["읽다", "그리다", "쓰다", "보내다"] }
+    ]
+  },
+  {
+    day: 34,
+    hanjas: [
+      { hanja: "言", meaning: "말", choices: ["글", "말", "소리", "기호"] },
+      { hanja: "買", meaning: "사다", choices: ["팔다", "주다", "받다", "사다"] }
+    ]
+  },
+  {
+    day: 35,
+    hanjas: [
+      { hanja: "売", meaning: "팔다", choices: ["팔다", "사다", "가다", "오다"] },
+      { hanja: "行", meaning: "가다", choices: ["오다", "가다", "서다", "달리다"] }
+    ]
+  },
+  {
+    day: 36,
+    hanjas: [
+      { hanja: "来", meaning: "오다", choices: ["오다", "가다", "걷다", "뛰다"] },
+      { hanja: "帰", meaning: "돌아가다", choices: ["나가다", "오다", "돌아가다", "계속하다"] }
+    ]
+  },
+  {
+    day: 37,
+    hanjas: [
+      { hanja: "歩", meaning: "걷다", choices: ["달리다", "앉다", "걷다", "누워있다"] },
+      { hanja: "走", meaning: "달리다", choices: ["서다", "달리다", "걷다", "날다"] }
+    ]
+  },
+  {
+    day: 38,
+    hanjas: [
+      { hanja: "起", meaning: "일어나다", choices: ["자다", "앉다", "일어나다", "눕다"] },
+      { hanja: "働", meaning: "일하다", choices: ["놀다", "쉬다", "일하다", "자다"] }
+    ]
+  },
+  {
+    day: 39,
+    hanjas: [
+      { hanja: "作", meaning: "만들다", choices: ["부수다", "보다", "만들다", "배우다"] },
+      { hanja: "休", meaning: "쉬다", choices: ["일하다", "걷다", "쉬다", "달리다"] }
+    ]
+  },
+  {
+    day: 40,
+    hanjas: [
+      { hanja: "体", meaning: "몸", choices: ["마음", "몸", "머리", "눈"] },
+      { hanja: "好", meaning: "좋아하다", choices: ["싫어하다", "좋아하다", "미워하다", "기다리다"] }
+    ]
+  },
+  {
+    day: 41,
+    hanjas: [
+      { hanja: "友", meaning: "친구", choices: ["형", "동생", "친구", "어른"] },
+      { hanja: "父", meaning: "아버지", choices: ["어머니", "형", "아버지", "누나"] }
+    ]
+  },
+  {
+    day: 42,
+    hanjas: [
+      { hanja: "母", meaning: "어머니", choices: ["아버지", "어머니", "형", "동생"] },
+      { hanja: "兄", meaning: "형", choices: ["형", "동생", "아버지", "친구"] }
+    ]
+  },
+  {
+    day: 43,
+    hanjas: [
+      { hanja: "弟", meaning: "남동생", choices: ["형", "남동생", "누나", "어머니"] },
+      { hanja: "馬", meaning: "말", choices: ["말", "소", "돼지", "개"] }
+    ]
+  },
+  {
+    day: 44,
+    hanjas: [
+      { hanja: "魚", meaning: "물고기", choices: ["물고기", "개", "벌레", "뱀"] },
+      { hanja: "虫", meaning: "벌레", choices: ["벌레", "물고기", "개", "나비"] }
+    ]
+  },
+  {
+    day: 45,
+    hanjas: [
+      { hanja: "草", meaning: "풀", choices: ["풀", "꽃", "나무", "흙"] },
+      { hanja: "車", meaning: "수레", choices: ["배", "수레", "기차", "말"] }
+    ]
+  },
+  {
+    day: 46,
+    hanjas: [
+      { hanja: "色", meaning: "색", choices: ["색", "모양", "소리", "냄새"] },
+      { hanja: "自", meaning: "스스로", choices: ["스스로", "다른 사람", "앞", "뒤"] }
+    ]
+  },
+  {
+    day: 47,
+    hanjas: [
+      { hanja: "平", meaning: "평평하다", choices: ["평평하다", "높다", "울퉁불퉁", "기울다"] },
+      { hanja: "光", meaning: "빛", choices: ["빛", "소리", "색", "불"] }
+    ]
+  },
+  {
+    day: 48,
+    hanjas: [
+      { hanja: "弓", meaning: "활", choices: ["활", "칼", "창", "방패"] },
+      { hanja: "立", meaning: "서다", choices: ["앉다", "서다", "눕다", "기다리다"] }
+    ]
+  },
+  {
+    day: 49,
+    hanjas: [
+      { hanja: "犬", meaning: "개", choices: ["고양이", "돼지", "개", "소"] },
+      { hanja: "石", meaning: "돌", choices: ["돌", "흙", "쇠", "구슬"] }
+    ]
+  },
+  {
+    day: 50,
+    hanjas: [
+      { hanja: "空", meaning: "비다", choices: ["차다", "비다", "무겁다", "작다"] },
+      { hanja: "船", meaning: "배", choices: ["배", "말", "차", "집"] }
+    ]
+  }
+];;
+    let currentDay = 0;
+    let selectedHanja = null;
+
+    const dayButtonsDiv = document.getElementById("day-buttons");
+    const dayTitle = document.getElementById("day-title");
+    const hanjaGrid = document.getElementById("hanja-grid");
+    const questionBox = document.getElementById("question-box");
+
+    function renderDays() {
+      hanjaDays.forEach((d, idx) => {
+        const btn = document.createElement("button");
+        btn.textContent = `Day ${d.day}`;
+        btn.className = "day-button" + (idx === currentDay ? " active" : "");
+        btn.onclick = () => {
+          currentDay = idx;
+          selectedHanja = null;
+          render();
+        };
+        dayButtonsDiv.appendChild(btn);
+      });
+    }
+
+    function render() {
+      dayButtonsDiv.innerHTML = "";
+      renderDays();
+      dayTitle.textContent = `Day ${hanjaDays[currentDay].day}`;
+      hanjaGrid.innerHTML = "";
+      questionBox.innerHTML = "";
+
+      hanjaDays[currentDay].hanjas.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "hanja-box";
+        div.textContent = item.hanja;
+        div.onclick = () => {
+          selectedHanja = item;
+          renderQuestion();
+        };
+        hanjaGrid.appendChild(div);
+      });
+    }
+
+    function renderQuestion() {
+      questionBox.innerHTML = "";
+      if (!selectedHanja) return;
+      const title = document.createElement("h3");
+      title.textContent = `${selectedHanja.hanja} 문제`;
+      questionBox.appendChild(title);
+
+      const question = document.createElement("p");
+      question.textContent = `'${selectedHanja.hanja}'의 뜻으로 알맞은 것을 고르세요.`;
+      questionBox.appendChild(question);
+
+      const choiceBox = document.createElement("div");
+      choiceBox.className = "choices";
+
+      selectedHanja.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.onclick = () => {
+          btn.className = choice === selectedHanja.meaning ? "correct" : "wrong";
+          const result = document.createElement("p");
+          result.textContent = choice === selectedHanja.meaning ? "정답입니다!" : `틀렸어요. 정답은 '${selectedHanja.meaning}'입니다.`;
+          questionBox.appendChild(result);
+        };
+        choiceBox.appendChild(btn);
+      });
+
+      questionBox.appendChild(choiceBox);
+
+      const back = document.createElement("button");
+      back.textContent = "돌아가기";
+      back.className = "back-btn";
+      back.onclick = () => {
+        selectedHanja = null;
+        render();
+      };
+      questionBox.appendChild(back);
+    }
+
+    render();
+  </script>
+</body>
+</html>
