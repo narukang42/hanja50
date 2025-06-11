@@ -12,13 +12,52 @@
       margin: auto;
       background-color: skyblue;
     }
-    .day-button { padding: 6px 12px; margin: 2px; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; }
-    .day-button.active { background: #add8e6; }
-    .hanja-box { border: 1px solid #ccc; padding: 20px; border-radius: 12px; font-size: 36px; cursor: pointer; text-align: center; }
-    .choices button { margin: 6px; padding: 10px 20px; border-radius: 12px; cursor: pointer; }
-    .correct { background: #a8e6cf; }
-    .wrong { background: #ff8b94; }
-    .back-btn { margin-top: 20px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    .day-button {
+      padding: 6px 12px;
+      margin: 2px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .day-button.active {
+      background: #add8e6;
+    }
+    .hanja-box {
+      border: 3px solid gold;
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 36px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+    .hanja-box:hover {
+      transform: scale(1.05);
+    }
+    .choices button {
+      margin: 6px;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    .correct {
+      background: #a8e6cf;
+    }
+    .wrong {
+      background: #ff8b94;
+    }
+    .back-btn {
+      margin-top: 20px;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
